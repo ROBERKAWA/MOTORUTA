@@ -8,76 +8,78 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MotoRuta">
 <title>MotoRuta Canarias</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
   --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;
-  --orange:#FF5F1F;--orange2:#ff7a42;
-  --blue:#2979FF;--green:#00C853;--red:#FF1744;--yellow:#FFD600;
+  --orange:#FF5F1F;--blue:#2979FF;--green:#00C853;--red:#FF1744;--yellow:#FFD600;
   --text:#f0f0f0;--text2:#888;--text3:#555;--border:#222230;
 }
 html,body{height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
-.app{max-width:480px;margin:0 auto;height:100vh;display:flex;flex-direction:column;position:relative;background:var(--bg);}
-
-/* SCREENS */
+.app{max-width:480px;margin:0 auto;height:100vh;display:flex;flex-direction:column;background:var(--bg);}
 .screen{display:none;flex-direction:column;flex:1;overflow-y:auto;padding-bottom:68px;}
 .screen.active{display:flex;}
-
-/* TOPBAR */
-.topbar{padding:14px 18px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg);}
-.topbar-logo{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--orange);letter-spacing:2px;}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;}
+.topbar{padding:12px 16px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg);z-index:10;}
+.topbar-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--orange);letter-spacing:2px;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;}
 .topbar-sub{font-size:11px;color:var(--text2);margin-top:1px;}
-
-/* BOTTOM NAV */
-.bottom-nav{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:100;}
-.nav-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text3);transition:color 0.2s;}
+.bottom-nav{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:200;}
+.nav-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text3);}
 .nav-btn.active{color:var(--orange);}
 .nav-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .nav-btn span{font-size:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px;}
 
 /* LOGIN */
 .login-wrap{display:flex;flex-direction:column;height:100vh;align-items:center;justify-content:center;padding:24px;background:var(--bg);}
-.login-logo{font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:800;color:var(--orange);letter-spacing:4px;text-align:center;line-height:1;}
-.login-tagline{font-size:12px;color:var(--text2);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-top:6px;margin-bottom:32px;}
-.tabs{display:flex;background:var(--bg2);border-radius:10px;padding:3px;margin-bottom:18px;gap:3px;width:100%;}
-.tab-btn{flex:1;padding:9px;border:none;border-radius:8px;background:transparent;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
+.login-logo{font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:800;color:var(--orange);letter-spacing:4px;text-align:center;}
+.login-tagline{font-size:12px;color:var(--text2);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-top:5px;margin-bottom:28px;}
+.tabs{display:flex;background:var(--bg2);border-radius:10px;padding:3px;margin-bottom:14px;gap:3px;width:100%;}
+.tab-btn{flex:1;padding:9px;border:none;border-radius:8px;background:transparent;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:1px;}
 .tab-btn.active{background:var(--orange);color:#fff;}
-.form-group{width:100%;margin-bottom:11px;}
+.form-group{width:100%;margin-bottom:10px;}
 .form-label{font-size:11px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;display:block;}
-.form-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;}
+.form-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;outline:none;}
 .form-input:focus{border-color:var(--orange);}
 .form-input::placeholder{color:var(--text3);}
-.btn-primary{width:100%;background:var(--orange);border:none;border-radius:10px;padding:14px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;cursor:pointer;margin-top:6px;transition:background 0.2s;}
-.btn-primary:active{background:var(--orange2);}
+.btn-primary{width:100%;background:var(--orange);border:none;border-radius:10px;padding:14px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;cursor:pointer;margin-top:6px;}
 .btn-ghost{width:100%;background:transparent;border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text2);font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer;margin-top:8px;}
 
-/* CARDS */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;}
-.section-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+/* PHOTO */
+.photo-upload-area{width:100%;border:2px dashed var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;margin-bottom:10px;position:relative;}
+.photo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.photo-preview{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--orange);}
+.photo-placeholder{width:64px;height:64px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:26px;}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;flex-shrink:0;overflow:hidden;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.avatar-big{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;overflow:hidden;margin:0 auto 10px;border:3px solid var(--orange);}
+.avatar-big img{width:100%;height:100%;object-fit:cover;}
 
 /* MAP */
-.map-box{background:#0a1f0d;flex-shrink:0;position:relative;overflow:hidden;}
-.map-svg{width:100%;height:100%;display:block;}
-.live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,0.75);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;}
-.pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.85);}}
+#real-map{height:280px;flex-shrink:0;z-index:1;}
+.leaflet-container{background:#0a1f0d!important;}
+.map-overlay-top{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;z-index:50;pointer-events:none;}
+.map-pill{background:rgba(10,10,15,0.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--text);}
+.map-pill .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:5px;animation:blink 1.4s infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* PILOT LIST */
 .pilot-row{display:flex;align-items:center;gap:11px;padding:11px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:9px;}
-.avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;flex-shrink:0;}
 .badge-green{background:rgba(0,200,83,0.15);color:var(--green);font-size:11px;padding:3px 8px;border-radius:6px;}
-.badge-stop{background:rgba(136,136,136,0.15);color:var(--text2);font-size:11px;padding:3px 8px;border-radius:6px;}
+.badge-stop{background:rgba(136,136,136,0.1);color:var(--text2);font-size:11px;padding:3px 8px;border-radius:6px;}
 .badge-you{background:rgba(255,95,31,0.15);color:var(--orange);font-size:11px;padding:3px 8px;border-radius:6px;}
 
 /* TELEMETRY */
 .metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
 .metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:13px;}
-.metric-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:700;color:var(--orange);line-height:1;}
+.metric-val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;color:var(--orange);line-height:1;}
 .metric-unit{font-size:12px;color:var(--text2);margin-left:2px;}
 .metric-lbl{font-size:11px;color:var(--text2);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;}
 .rec-bar{display:flex;align-items:center;gap:8px;background:rgba(255,23,68,0.08);border:1px solid rgba(255,23,68,0.25);border-radius:10px;padding:10px 14px;}
-.rec-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 0.9s infinite;}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:blink 0.9s infinite;}
 .timer-big{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:var(--red);letter-spacing:2px;margin-left:auto;}
 .tilt-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:13px;}
 .tilt-bar-bg{height:8px;background:var(--bg3);border-radius:4px;position:relative;margin:8px 0 4px;}
@@ -87,8 +89,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
 .btn-stop{background:var(--red);border:none;border-radius:12px;padding:15px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;letter-spacing:2px;cursor:pointer;width:100%;}
 .btn-go{background:var(--green);border:none;border-radius:12px;padding:15px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;letter-spacing:2px;cursor:pointer;width:100%;}
 
+/* REPLAY MAP */
+#replay-map{height:220px;flex-shrink:0;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+
 /* SUMMARY */
-.summary-big{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:800;color:var(--orange);letter-spacing:2px;}
 .sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
 .sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:13px;}
 .sum-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--orange);}
@@ -96,29 +100,33 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
 .share-btn{background:transparent;border:1px solid var(--orange);border-radius:12px;padding:14px;color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;cursor:pointer;width:100%;}
 
 /* PROFILE */
-.avatar-big{width:72px;height:72px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:#fff;margin:0 auto 12px;}
 .prow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);}
 .prow-lbl{font-size:14px;color:var(--text2);}
 .prow-val{font-size:14px;font-weight:500;}
 .invite-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);word-break:break-all;margin-bottom:10px;}
-.btn-inv{background:var(--orange);border:none;border-radius:8px;padding:10px 16px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:1px;}
-.btn-inv-ghost{background:transparent;border:1px solid var(--border);border-radius:8px;padding:10px 16px;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-inv{background:var(--orange);border:none;border-radius:8px;padding:10px 14px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-inv-ghost{background:transparent;border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.change-photo-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;font-size:13px;color:var(--text2);position:relative;overflow:hidden;margin-top:8px;}
+.change-photo-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
 
-/* FIREBASE STATUS */
-.firebase-status{font-size:11px;padding:4px 10px;border-radius:6px;margin-left:auto;}
-.fs-online{background:rgba(0,200,83,0.15);color:var(--green);}
-.fs-offline{background:rgba(136,136,136,0.1);color:var(--text3);}
-.fs-connecting{background:rgba(255,214,0,0.15);color:var(--yellow);}
-
+.gps-bar{background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);display:flex;align-items:center;gap:8px;}
+.gps-bar-warn{background:rgba(255,214,0,0.08);border:1px solid rgba(255,214,0,0.2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--yellow);display:flex;align-items:center;gap:8px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;}
+/* ISLAND SELECTOR */
+#island-selector::-webkit-scrollbar{display:none;}
+.island-btn{flex-shrink:0;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.island-btn.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+.island-btn:active{opacity:0.8;}
+.section-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
 .pad{padding:14px 16px;display:flex;flex-direction:column;gap:11px;}
 </style>
 </head>
 <body>
 <div class="app" id="app">
 
-<!-- ═══════════ LOGIN ═══════════ -->
+<!-- LOGIN -->
 <div id="screen-login" class="login-wrap">
-  <div style="font-size:48px;margin-bottom:8px;text-align:center;">🏍️</div>
+  <div style="font-size:44px;margin-bottom:6px;">🏍️</div>
   <div class="login-logo">MOTORUTA</div>
   <div class="login-tagline">Canarias · Grupo privado de moteros</div>
   <div style="width:100%;max-width:360px;">
@@ -132,64 +140,55 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
       <button class="btn-primary" onclick="doLogin()">ENTRAR →</button>
     </div>
     <div id="pane-register" style="display:none;">
+      <div class="photo-upload-area" onclick="void(0)">
+        <input type="file" accept="image/*" id="reg-photo-input" onchange="previewRegPhoto(this)">
+        <div id="reg-photo-preview"><div class="photo-placeholder">📷</div></div>
+        <div style="font-size:12px;color:var(--text2);text-align:center;">Toca para subir foto de tu moto<br><span style="color:var(--orange);">o foto tuya con el casco</span></div>
+      </div>
       <div class="form-group"><label class="form-label">Nombre completo</label><input class="form-input" type="text" id="r-name" placeholder="Tu nombre"></div>
-      <div class="form-group"><label class="form-label">Teléfono o email</label><input class="form-input" type="text" id="r-contact" placeholder="612 345 678 o email"></div>
-      <div class="form-group"><label class="form-label">Modelo de moto</label><input class="form-input" type="text" id="r-moto" placeholder="Kawasaki Z900, BMW R1250GS..."></div>
+      <div class="form-group"><label class="form-label">Teléfono o email</label><input class="form-input" type="text" id="r-contact" placeholder="612 345 678"></div>
+      <div class="form-group"><label class="form-label">Modelo de moto</label><input class="form-input" type="text" id="r-moto" placeholder="Kawasaki Z750R..."></div>
       <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" type="password" id="r-pass" placeholder="Mínimo 6 caracteres"></div>
       <button class="btn-primary" onclick="doRegister()">CREAR CUENTA →</button>
-    </div>
-    <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text2);">
-      ¿Tienes link de invitación? <span style="color:var(--orange);cursor:pointer;" onclick="showInviteInfo()">Regístrate y únete</span>
     </div>
   </div>
 </div>
 
-<!-- ═══════════ APP PRINCIPAL ═══════════ -->
+<!-- APP -->
 <div id="screen-app" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
 
   <!-- MAPA TAB -->
   <div id="tab-mapa" class="screen active">
     <div class="topbar">
-      <div>
-        <div class="topbar-logo">MOTORUTA</div>
-        <div class="topbar-sub" id="island-label">📍 Detectando isla...</div>
+      <div><div class="topbar-logo">MOTORUTA</div><div class="topbar-sub" id="island-label">📍 Detectando isla...</div></div>
+      <div style="margin-left:auto;font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(0,200,83,0.1);color:var(--green);" id="online-badge">
+        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:4px;animation:blink 1.4s infinite;vertical-align:middle;"></span>4 pilotos
       </div>
-      <div class="firebase-status fs-connecting" id="firebase-badge">⟳ conectando</div>
     </div>
-    <div class="map-box" style="height:255px;">
-      <svg class="map-svg" id="map-svg" viewBox="0 0 480 255" xmlns="http://www.w3.org/2000/svg">
-        <rect width="480" height="255" fill="#081a0a"/>
-        <g stroke="#2a5a2a" stroke-width="0.5" fill="none" opacity="0.2">
-          <line x1="0" y1="51" x2="480" y2="51"/><line x1="0" y1="102" x2="480" y2="102"/>
-          <line x1="0" y1="153" x2="480" y2="153"/><line x1="0" y1="204" x2="480" y2="204"/>
-          <line x1="96" y1="0" x2="96" y2="255"/><line x1="192" y1="0" x2="192" y2="255"/>
-          <line x1="288" y1="0" x2="288" y2="255"/><line x1="384" y1="0" x2="384" y2="255"/>
-        </g>
-        <path d="M20 220 Q80 180 150 155 Q210 132 260 105 Q310 78 380 52 Q430 35 465 22" stroke="#FF5F1F" stroke-width="1.8" fill="none" stroke-dasharray="5,3" opacity="0.4"/>
-        <!-- Mi posición -->
-        <circle id="dot-me" cx="260" cy="105" r="8" fill="#FF5F1F"/>
-        <circle cx="260" cy="105" r="16" fill="#FF5F1F" opacity="0.15"/>
-        <text id="lbl-me" x="272" y="100" fill="#fff" font-size="11" font-family="Barlow Condensed" font-weight="600">Tú</text>
-        <!-- Otros pilotos demo -->
-        <circle id="dot-p2" cx="370" cy="58" r="7" fill="#2979FF"/>
-        <circle cx="370" cy="58" r="14" fill="#2979FF" opacity="0.15"/>
-        <text x="382" y="54" fill="#8ab4ff" font-size="10" font-family="Barlow Condensed">JM</text>
-        <circle id="dot-p3" cx="150" cy="150" r="7" fill="#00C853"/>
-        <text x="162" y="146" fill="#80e5a0" font-size="10" font-family="Barlow Condensed">Ana</text>
-        <circle id="dot-p4" cx="75" cy="190" r="7" fill="#FFD600"/>
-        <text x="87" y="186" fill="#ffe566" font-size="10" font-family="Barlow Condensed">Rafa</text>
-        <!-- Isla label -->
-        <rect x="170" y="218" width="140" height="26" rx="6" fill="rgba(0,0,0,0.65)"/>
-        <text id="map-island" x="240" y="235" fill="#666" font-size="11" font-family="Barlow Condensed" text-anchor="middle">Tenerife</text>
-      </svg>
+    <!-- SELECTOR DE ISLA -->
+    <div style="padding:8px 16px 0;display:flex;gap:6px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;" id="island-selector">
+      <button class="island-btn active" onclick="selectIsland('Tenerife',28.2916,-16.6291,11)">🌋 Tenerife</button>
+      <button class="island-btn" onclick="selectIsland('Gran Canaria',27.9252,-15.5375,11)">🏖️ G. Canaria</button>
+      <button class="island-btn" onclick="selectIsland('Lanzarote',29.0469,-13.5899,11)">🌵 Lanzarote</button>
+      <button class="island-btn" onclick="selectIsland('Fuerteventura',28.3587,-14.0537,10)">🏜️ Fuerte.</button>
+      <button class="island-btn" onclick="selectIsland('La Palma',28.6835,-17.8632,11)">🌿 La Palma</button>
+      <button class="island-btn" onclick="selectIsland('La Gomera',28.0916,-17.1131,12)">🌊 La Gomera</button>
+      <button class="island-btn" onclick="selectIsland('El Hierro',27.7411,-18.0210,12)">⛰️ El Hierro</button>
+    </div>
+    <div style="position:relative;">
+      <div id="real-map"></div>
+      <div class="map-overlay-top">
+        <div class="map-pill" id="map-speed-pill">🏍️ <span id="map-my-speed">0</span> km/h</div>
+        <div class="map-pill" id="map-island-pill">📍 <span id="map-island-name">Tenerife</span></div>
+      </div>
     </div>
     <div class="pad">
       <div class="section-label">Pilotos del grupo</div>
       <div class="pilot-row">
-        <div class="avatar" style="background:rgba(255,95,31,0.2);color:var(--orange);" id="av-me">?</div>
+        <div class="avatar" style="background:rgba(255,95,31,0.2);color:var(--orange);" id="av-me-map">?</div>
         <div style="flex:1;">
-          <div style="font-weight:600;font-size:14px;" id="name-me">—</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:2px;" id="moto-me">—</div>
+          <div style="font-weight:600;font-size:14px;" id="name-me-map">—</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px;" id="moto-me-map">—</div>
         </div>
         <div class="badge-you">● Tú</div>
       </div>
@@ -205,7 +204,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
       </div>
       <div class="pilot-row">
         <div class="avatar" style="background:rgba(255,214,0,0.2);color:var(--yellow);">RF</div>
-        <div style="flex:1;"><div style="font-weight:600;font-size:14px;">Rafa F.</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">BMW R1250GS · <span id="spd-rf">64</span> km/h</div></div>
+        <div style="flex:1;"><div style="font-weight:600;font-size:14px;">Rafa F.</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">BMW R1250GS · <span id="spd-rf">62</span> km/h</div></div>
         <div class="badge-green">● vivo</div>
       </div>
     </div>
@@ -214,29 +213,56 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
   <!-- RUTA TAB -->
   <div id="tab-ruta" class="screen">
     <div class="topbar">
-      <div><div class="topbar-title">TELEMETRÍA</div><div class="topbar-sub">Datos en tiempo real</div></div>
+      <div><div class="topbar-title">TELEMETRÍA</div><div class="topbar-sub">GPS en tiempo real</div></div>
       <div style="margin-left:auto;font-size:11px;color:var(--text3);" id="gps-lbl">GPS inactivo</div>
     </div>
     <div class="pad">
+      <div id="gps-warning" class="gps-bar-warn" style="display:none;">
+        ⚠️ Para mejores datos, fija el móvil en el manillar
+      </div>
       <div class="rec-bar" id="rec-bar" style="display:none;">
         <div class="rec-dot"></div>
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--red);letter-spacing:2px;">REC</span>
         <span class="timer-big" id="timer">00:00:00</span>
       </div>
       <div class="metrics-grid">
-        <div class="metric-card"><div class="metric-val" id="t-spd">0<span class="metric-unit">km/h</span></div><div class="metric-lbl">Velocidad</div></div>
-        <div class="metric-card"><div class="metric-val" id="t-km">0<span class="metric-unit">km</span></div><div class="metric-lbl">Recorridos</div></div>
-        <div class="metric-card" style="--c:var(--blue)"><div class="metric-val" style="color:var(--blue);" id="t-max">0<span class="metric-unit">km/h</span></div><div class="metric-lbl">Velocidad máx</div></div>
-        <div class="metric-card"><div class="metric-val" style="color:var(--green);" id="t-avg">0<span class="metric-unit">km/h</span></div><div class="metric-lbl">Velocidad media</div></div>
+        <div class="metric-card" style="border-color:rgba(255,95,31,0.4);">
+          <div class="metric-val" id="t-spd">0<span class="metric-unit">km/h</span></div>
+          <div class="metric-lbl">⚡ Velocidad actual</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" id="t-km">0<span class="metric-unit">km</span></div>
+          <div class="metric-lbl">📏 Recorridos</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--blue);" id="t-max">0<span class="metric-unit">km/h</span></div>
+          <div class="metric-lbl">🔝 Vel. máxima</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--green);" id="t-avg">0<span class="metric-unit">km/h</span></div>
+          <div class="metric-lbl">📊 Vel. media</div>
+        </div>
       </div>
       <div class="metrics-grid">
-        <div class="metric-card"><div class="metric-val" style="color:var(--orange);" id="t-cl">0</div><div class="metric-lbl">← Curvas izq</div></div>
-        <div class="metric-card"><div class="metric-val" style="color:var(--blue);" id="t-cr">0</div><div class="metric-lbl">Curvas der →</div></div>
-        <div class="metric-card"><div class="metric-val" style="color:var(--green);" id="t-mov">0<span class="metric-unit">min</span></div><div class="metric-lbl">⬤ Rodando</div></div>
-        <div class="metric-card"><div class="metric-val" style="color:var(--text2);" id="t-stp">0<span class="metric-unit">min</span></div><div class="metric-lbl">⏸ Parado</div></div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--orange);" id="t-cl">0</div>
+          <div class="metric-lbl">← Curvas izq</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--blue);" id="t-cr">0</div>
+          <div class="metric-lbl">Curvas der →</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--green);" id="t-mov">0<span class="metric-unit">min</span></div>
+          <div class="metric-lbl">⬤ Rodando</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--text2);" id="t-stp">0<span class="metric-unit">min</span></div>
+          <div class="metric-lbl">⏸ Parado</div>
+        </div>
       </div>
       <div class="tilt-wrap">
-        <div class="section-label">Inclinación máxima registrada</div>
+        <div class="section-label">Inclinación máxima (móvil fijo en moto)</div>
         <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;">
           <span style="color:var(--orange);" id="t-tl">← 0°</span>
           <span style="color:var(--blue);" id="t-tr">0° →</span>
@@ -246,7 +272,18 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
           <div class="tilt-r" id="tbar-r" style="width:0%;"></div>
           <div class="tilt-mid"></div>
         </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:4px;">Requiere móvil fijo en la moto</div>
+      </div>
+      <!-- GPS PRECISION -->
+      <div class="card" id="gps-info-card">
+        <div class="section-label">Señal GPS</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:var(--text2);">Precisión</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;" id="gps-accuracy">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+          <span style="font-size:13px;color:var(--text2);">Satélites</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--green);" id="gps-sats">—</span>
+        </div>
       </div>
       <button class="btn-go" id="btn-main" onclick="toggleRuta()">▶ INICIAR RUTA</button>
     </div>
@@ -254,13 +291,15 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
 
   <!-- RESUMEN TAB -->
   <div id="tab-resumen" class="screen">
-    <div class="topbar"><div><div class="topbar-title">RESUMEN</div><div class="topbar-sub">Última ruta guardada</div></div></div>
+    <div class="topbar"><div><div class="topbar-title">RESUMEN</div><div class="topbar-sub">Última ruta</div></div></div>
     <div class="pad">
-      <div style="text-align:center;padding:16px 0 8px;">
-        <div style="font-size:40px;" id="s-emoji">🏁</div>
-        <div class="summary-big" id="s-title">SIN RUTAS AÚN</div>
-        <div style="font-size:13px;color:var(--text2);margin-top:4px;" id="s-where">Inicia tu primera ruta en Telemetría</div>
+      <div style="text-align:center;padding:14px 0 6px;">
+        <div style="font-size:38px;" id="s-emoji">🏁</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;color:var(--orange);letter-spacing:2px;" id="s-title">SIN RUTAS AÚN</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;" id="s-where">Inicia tu primera ruta</div>
       </div>
+      <!-- REPLAY MAP -->
+      <div id="replay-map" style="display:none;"></div>
       <div class="sum-grid">
         <div class="sum-card"><div class="sum-val" id="s-km">—</div><div class="sum-lbl">Kilómetros</div></div>
         <div class="sum-card"><div class="sum-val" id="s-time">—</div><div class="sum-lbl">Tiempo total</div></div>
@@ -286,29 +325,32 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
   <div id="tab-perfil" class="screen">
     <div class="topbar"><div><div class="topbar-title">MI PERFIL</div></div></div>
     <div class="pad">
-      <div style="text-align:center;padding:16px 0 20px;border-bottom:1px solid var(--border);">
-        <div class="avatar-big" id="pf-av">?</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;" id="pf-name">—</div>
-        <div style="font-size:13px;color:var(--text2);margin-top:4px;" id="pf-moto">—</div>
+      <div style="text-align:center;padding:14px 0 18px;border-bottom:1px solid var(--border);">
+        <div class="avatar-big" id="pf-av-big" style="background:rgba(255,95,31,0.2);color:var(--orange);">?</div>
+        <div class="change-photo-btn">
+          <input type="file" accept="image/*" onchange="changeProfilePhoto(this)">
+          📷 Cambiar foto
+        </div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;margin-top:12px;" id="pf-name">—</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;" id="pf-moto">—</div>
       </div>
       <div class="prow"><span class="prow-lbl">Contacto</span><span class="prow-val" id="pf-contact">—</span></div>
       <div class="prow"><span class="prow-lbl">Rutas realizadas</span><span class="prow-val" id="pf-routes">0</span></div>
       <div class="prow"><span class="prow-lbl">Km totales</span><span class="prow-val" id="pf-km">0 km</span></div>
-      <div class="card" style="margin-top:4px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--orange);margin-bottom:10px;">🏍️ Invitar al grupo</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Comparte este link con otros moteros:</div>
-        <div class="invite-box" id="invite-url">motoruta-canarias.github.io</div>
+      <div class="card">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--orange);margin-bottom:8px;">🏍️ Invitar al grupo</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Comparte este link:</div>
+        <div class="invite-box" id="invite-url">roberkawa.github.io/MOTORUTA</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn-inv" onclick="copyInvite()">📋 Copiar</button>
           <button class="btn-inv-ghost" onclick="shareWA()">💬 WhatsApp</button>
           <button class="btn-inv-ghost" onclick="shareTG()">✈️ Telegram</button>
         </div>
       </div>
-      <button class="btn-ghost" style="margin-top:4px;" onclick="doLogout()">Cerrar sesión</button>
+      <button class="btn-ghost" onclick="doLogout()">Cerrar sesión</button>
     </div>
   </div>
 
-  <!-- NAV -->
   <nav class="bottom-nav">
     <button class="nav-btn active" id="nav-mapa" onclick="goTab('mapa')">
       <svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
@@ -328,391 +370,439 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
     </button>
   </nav>
 </div>
-
 </div>
 
 <script>
 // ═══ STATE ═══
-let user = JSON.parse(localStorage.getItem('mr_user') || 'null');
-let tracking = false, tStart = 0, timerInt = null, secInt = null, watchId = null;
-let totalKm = 0, maxSpd = 0, spdList = [], movSec = 0, stpSec = 0;
-let cL = 0, cR = 0, tiltL = 0, tiltR = 0;
-let lastCurve = 0, lastPos = null, fakeSpd = 0, fakeKm = 0, fakeCT = 0;
-let lastSummary = JSON.parse(localStorage.getItem('mr_summary') || 'null');
-let island = 'Tenerife';
+let user = JSON.parse(localStorage.getItem('mr_user')||'null');
+let tracking=false, tStart=0, timerInt=null, secInt=null, watchId=null;
+let totalKm=0, maxSpd=0, spdList=[], movSec=0, stpSec=0;
+let cL=0, cR=0, tiltL=0, tiltR=0, lastCurve=0;
+let trackPoints=[], lastPos=null, lastHdg=null;
+let lastSummary=JSON.parse(localStorage.getItem('mr_summary')||'null');
+let island='Tenerife';
+let regPhotoData=null;
+let mainMap=null, myMarker=null, trackLine=null;
+let replayMap=null;
 
-// ═══ FIREBASE CONFIG ═══
-// IMPORTANTE: Reemplaza estos valores con los de tu proyecto Firebase
-// Instrucciones en README.md
-const FB_URL = 'https://motoruta-canarias-default-rtdb.firebaseio.com';
-let fbAvailable = false;
+// ═══ MAP INIT ═══
+function initMainMap(){
+  if(mainMap) return;
+  mainMap = L.map('real-map', {
+    zoomControl:false,
+    attributionControl:false,
+    dragging:true,
+    tap:true
+  }).setView([28.2916, -16.6291], 11);
 
-async function fbSet(path, data) {
-  if (!fbAvailable) return;
-  try {
-    await fetch(`${FB_URL}/${path}.json`, {
-      method: 'PUT', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(data)
-    });
-  } catch(e) {}
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19,
+    className:'map-tiles'
+  }).addTo(mainMap);
+
+  // Estilo oscuro via CSS
+  const style=document.createElement('style');
+  style.textContent='.map-tiles{filter:brightness(0.5) saturate(0.8) hue-rotate(180deg) invert(1);}';
+  document.head.appendChild(style);
+
+  // Marcadores demo
+  const demoIcon = (color, label) => L.divIcon({
+    html:`<div style="background:${color};width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 6px ${color}"></div>`,
+    iconSize:[12,12], iconAnchor:[6,6], className:''
+  });
+
+  L.marker([28.31, -16.58], {icon:demoIcon('#2979FF','JM')}).addTo(mainMap)
+    .bindPopup('<b>José M.</b><br>Kawasaki Z900');
+  L.marker([28.25, -16.70], {icon:demoIcon('#00C853','AR')}).addTo(mainMap)
+    .bindPopup('<b>Ana R.</b><br>Honda CB650F');
+  L.marker([28.20, -16.75], {icon:demoIcon('#FFD600','RF')}).addTo(mainMap)
+    .bindPopup('<b>Rafa F.</b><br>BMW R1250GS');
+
+  // Mi marcador
+  const myIcon = L.divIcon({
+    html:`<div style="background:#FF5F1F;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px #FF5F1F;"></div>`,
+    iconSize:[16,16], iconAnchor:[8,8], className:''
+  });
+  myMarker = L.marker([28.2916,-16.6291], {icon:myIcon, zIndexOffset:1000}).addTo(mainMap);
+
+  // Línea de recorrido
+  trackLine = L.polyline([], {color:'#FF5F1F', weight:3, opacity:0.8}).addTo(mainMap);
+
+  setTimeout(()=>mainMap.invalidateSize(), 300);
 }
 
-async function fbGet(path) {
-  if (!fbAvailable) return null;
-  try {
-    const r = await fetch(`${FB_URL}/${path}.json`);
-    return await r.json();
-  } catch(e) { return null; }
+// ═══ PHOTO ═══
+function previewRegPhoto(input){
+  if(!input.files||!input.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{
+    regPhotoData=e.target.result;
+    document.getElementById('reg-photo-preview').innerHTML=`<img src="${regPhotoData}" class="photo-preview">`;
+  };
+  r.readAsDataURL(input.files[0]);
 }
-
-async function checkFirebase() {
-  try {
-    const r = await fetch(`${FB_URL}/.json?shallow=true`, {signal: AbortSignal.timeout(4000)});
-    if (r.ok) {
-      fbAvailable = true;
-      setBadge('● online', 'fs-online');
-    } else {
-      setBadge('sin BD', 'fs-offline');
-    }
-  } catch(e) {
-    setBadge('sin BD', 'fs-offline');
+function changeProfilePhoto(input){
+  if(!input.files||!input.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{
+    user.photo=e.target.result;
+    localStorage.setItem('mr_user',JSON.stringify(user));
+    applyPhoto(user.photo);
+  };
+  r.readAsDataURL(input.files[0]);
+}
+function applyPhoto(data){
+  const big=document.getElementById('pf-av-big');
+  const small=document.getElementById('av-me-map');
+  if(data){
+    big.innerHTML=`<img src="${data}" alt="foto">`;
+    big.style.background='transparent';
+    small.innerHTML=`<img src="${data}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    small.style.background='transparent';
   }
-}
-
-function setBadge(txt, cls) {
-  const b = document.getElementById('firebase-badge');
-  b.textContent = txt;
-  b.className = 'firebase-status ' + cls;
 }
 
 // ═══ AUTH ═══
-function setTab(t) {
-  document.getElementById('pane-login').style.display = t==='login'?'block':'none';
-  document.getElementById('pane-register').style.display = t==='register'?'block':'none';
+function setTab(t){
+  document.getElementById('pane-login').style.display=t==='login'?'block':'none';
+  document.getElementById('pane-register').style.display=t==='register'?'block':'none';
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='register')));
 }
-
-function doLogin() {
-  const c = document.getElementById('l-contact').value.trim();
-  const p = document.getElementById('l-pass').value.trim();
-  if (!c || !p) { alert('Rellena todos los campos'); return; }
-  const stored = JSON.parse(localStorage.getItem('mr_user') || 'null');
-  if (stored && (stored.contact === c || stored.name === c) && stored.pass === p) {
-    user = stored; enterApp();
-  } else if (!stored) {
-    alert('No hay cuenta registrada. Ve a Registro.');
-  } else {
-    alert('Email/teléfono o contraseña incorrectos.');
-  }
+function doLogin(){
+  const c=document.getElementById('l-contact').value.trim();
+  const p=document.getElementById('l-pass').value.trim();
+  if(!c||!p){alert('Rellena todos los campos');return;}
+  const s=JSON.parse(localStorage.getItem('mr_user')||'null');
+  if(s&&(s.contact===c||s.name===c)&&s.pass===p){user=s;enterApp();}
+  else if(!s){alert('No hay cuenta. Ve a Registro.');}
+  else{alert('Email o contraseña incorrectos.');}
 }
-
-function doRegister() {
-  const n = document.getElementById('r-name').value.trim();
-  const c = document.getElementById('r-contact').value.trim();
-  const m = document.getElementById('r-moto').value.trim();
-  const p = document.getElementById('r-pass').value.trim();
-  if (!n||!c||!m||!p) { alert('Rellena todos los campos'); return; }
-  if (p.length < 6) { alert('La contraseña debe tener al menos 6 caracteres'); return; }
-  user = {name:n, contact:c, moto:m, pass:p, id: Date.now()};
-  localStorage.setItem('mr_user', JSON.stringify(user));
+function doRegister(){
+  const n=document.getElementById('r-name').value.trim();
+  const c=document.getElementById('r-contact').value.trim();
+  const m=document.getElementById('r-moto').value.trim();
+  const p=document.getElementById('r-pass').value.trim();
+  if(!n||!c||!m||!p){alert('Rellena todos los campos');return;}
+  if(p.length<6){alert('Contraseña mínimo 6 caracteres');return;}
+  user={name:n,contact:c,moto:m,pass:p,id:Date.now(),photo:regPhotoData||null};
+  localStorage.setItem('mr_user',JSON.stringify(user));
   enterApp();
 }
-
-function enterApp() {
-  document.getElementById('screen-login').style.display = 'none';
-  document.getElementById('screen-app').style.display = 'flex';
-  const ini = user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('av-me').textContent = ini;
-  document.getElementById('name-me').textContent = user.name;
-  document.getElementById('moto-me').textContent = '🏍️ ' + user.moto;
-  document.getElementById('pf-av').textContent = ini;
-  document.getElementById('pf-name').textContent = user.name;
-  document.getElementById('pf-moto').textContent = '🏍️ ' + user.moto;
-  document.getElementById('pf-contact').textContent = user.contact;
+function enterApp(){
+  document.getElementById('screen-login').style.display='none';
+  document.getElementById('screen-app').style.display='flex';
+  const ini=user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const avMap=document.getElementById('av-me-map');
+  const avBig=document.getElementById('pf-av-big');
+  if(user.photo){
+    applyPhoto(user.photo);
+  } else {
+    avMap.textContent=ini; avBig.textContent=ini;
+  }
+  document.getElementById('name-me-map').textContent=user.name;
+  document.getElementById('moto-me-map').textContent='🏍️ '+user.moto;
+  document.getElementById('pf-name').textContent=user.name;
+  document.getElementById('pf-moto').textContent='🏍️ '+user.moto;
+  document.getElementById('pf-contact').textContent=user.contact;
+  document.getElementById('invite-url').textContent=location.href.split('?')[0];
   loadStats();
   detectIsland();
-  checkFirebase();
-  animateDemoPilots();
-  if (lastSummary) fillSummary(lastSummary);
-  const url = location.href.replace(/\/$/, '');
-  document.getElementById('invite-url').textContent = url;
+  animateDemo();
+  if(lastSummary) fillSummary(lastSummary);
+  setTimeout(initMainMap, 100);
 }
-
-function loadStats() {
-  const routes = parseInt(localStorage.getItem('mr_routes') || '0');
-  const km = parseFloat(localStorage.getItem('mr_totalkm') || '0');
-  document.getElementById('pf-routes').textContent = routes;
-  document.getElementById('pf-km').textContent = km.toFixed(1) + ' km';
+function loadStats(){
+  document.getElementById('pf-routes').textContent=localStorage.getItem('mr_routes')||'0';
+  document.getElementById('pf-km').textContent=(parseFloat(localStorage.getItem('mr_totalkm')||'0')).toFixed(1)+' km';
 }
+function doLogout(){localStorage.removeItem('mr_user');location.reload();}
 
-function doLogout() {
-  localStorage.removeItem('mr_user');
-  location.reload();
-}
-
-// ═══ ISLAND DETECTION ═══
-function detectIsland() {
-  if (!navigator.geolocation) { setIsland('Canarias'); return; }
-  navigator.geolocation.getCurrentPosition(pos => {
-    const {latitude:lat, longitude:lng} = pos.coords;
-    if (lat>27.9&&lat<28.6&&lng>-16.9&&lng<-16.0) island='Tenerife';
-    else if (lat>27.7&&lat<28.2&&lng>-15.9&&lng<-15.3) island='Gran Canaria';
-    else if (lat>28.8&&lat<29.3&&lng>-14.0&&lng<-13.4) island='Lanzarote';
-    else if (lat>28.0&&lat<28.7&&lng>-14.6&&lng<-13.7) island='Fuerteventura';
-    else if (lat>28.5&&lat<28.9&&lng>-18.1&&lng<-17.7) island='La Palma';
-    else if (lat>27.6&&lat<27.9&&lng>-18.2&&lng<-17.8) island='El Hierro';
-    else if (lat>28.0&&lat<28.3&&lng>-17.4&&lng<-17.1) island='La Gomera';
-    else island = 'Canarias';
+// ═══ ISLAND ═══
+function detectIsland(){
+  if(!navigator.geolocation){setIsland('Canarias');return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const{latitude:la,longitude:lo}=pos.coords;
+    if(la>27.9&&la<28.6&&lo>-16.9&&lo<-16.0) island='Tenerife';
+    else if(la>27.7&&la<28.2&&lo>-15.9&&lo<-15.3) island='Gran Canaria';
+    else if(la>28.8&&la<29.3&&lo>-14.0&&lo<-13.4) island='Lanzarote';
+    else if(la>28.0&&la<28.7&&lo>-14.6&&lo<-13.7) island='Fuerteventura';
+    else if(la>28.5&&la<28.9&&lo>-18.1&&lo<-17.7) island='La Palma';
+    else if(la>27.6&&la<27.9&&lo>-18.2&&lo<-17.8) island='El Hierro';
+    else if(la>28.0&&la<28.3&&lo>-17.4&&lo<-17.1) island='La Gomera';
+    else island='Canarias';
     setIsland(island);
-  }, () => setIsland('Canarias'));
+    // Actualizar botón del selector
+    document.querySelectorAll('.island-btn').forEach(b=>{
+      b.classList.toggle('active', b.textContent.includes(island.split(' ')[0]));
+    });
+    // Centrar mapa en posición real
+    if(mainMap) mainMap.setView([la,lo],13);
+    if(myMarker) myMarker.setLatLng([la,lo]);
+  },()=>setIsland('Canarias'));
+}
+function selectIsland(name, lat, lon, zoom){
+  // Actualizar botones
+  document.querySelectorAll('.island-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent.includes(name.split(' ')[0]));
+  });
+  setIsland(name);
+  if(mainMap) mainMap.setView([lat,lon],zoom,{animate:true});
 }
 
-function setIsland(name) {
-  island = name;
-  document.getElementById('island-label').textContent = '📍 ' + name;
-  document.getElementById('map-island').textContent = name;
+function setIsland(n){
+  island=n;
+  document.getElementById('island-label').textContent='📍 '+n;
+  document.getElementById('map-island-name').textContent=n;
 }
 
-// ═══ DEMO PILOTS ANIMATION ═══
-function animateDemoPilots() {
-  setInterval(() => {
-    const s1 = 70 + Math.floor(Math.random()*40);
-    const s2 = 50 + Math.floor(Math.random()*50);
-    document.getElementById('spd-jm').textContent = s1;
-    document.getElementById('spd-rf').textContent = s2;
-    // Move dots slightly
-    const p2 = document.getElementById('dot-p2');
-    const p4 = document.getElementById('dot-p4');
-    const cx2 = parseFloat(p2.getAttribute('cx'));
-    const cx4 = parseFloat(p4.getAttribute('cx'));
-    p2.setAttribute('cx', Math.max(320, Math.min(430, cx2 + (Math.random()-0.5)*8)));
-    p4.setAttribute('cx', Math.max(40, Math.min(120, cx4 + (Math.random()-0.5)*6)));
-  }, 3000);
+// ═══ DEMO ANIMATION ═══
+function animateDemo(){
+  setInterval(()=>{
+    document.getElementById('spd-jm').textContent=70+Math.floor(Math.random()*45);
+    document.getElementById('spd-rf').textContent=50+Math.floor(Math.random()*55);
+  },3000);
 }
 
 // ═══ TRACKING ═══
-function toggleRuta() {
-  if (!tracking) startRuta(); else stopRuta();
-}
+function toggleRuta(){if(!tracking)startRuta();else stopRuta();}
 
-function startRuta() {
-  tracking = true; tStart = Date.now();
+function startRuta(){
+  tracking=true; tStart=Date.now();
   totalKm=0; maxSpd=0; spdList=[]; movSec=0; stpSec=0;
-  cL=0; cR=0; tiltL=0; tiltR=0; fakeSpd=0; fakeKm=0; fakeCT=0; lastPos=null;
-  document.getElementById('rec-bar').style.display = 'flex';
-  document.getElementById('btn-main').textContent = '⏹ DETENER RUTA';
-  document.getElementById('btn-main').className = 'btn-stop';
-  document.getElementById('gps-lbl').style.color = 'var(--green)';
-  document.getElementById('gps-lbl').textContent = '● GPS activo';
+  cL=0; cR=0; tiltL=0; tiltR=0; lastCurve=0;
+  trackPoints=[]; lastPos=null; lastHdg=null;
 
-  timerInt = setInterval(() => {
-    const e = Math.floor((Date.now()-tStart)/1000);
-    const h=Math.floor(e/3600), m=Math.floor((e%3600)/60), s=e%60;
-    document.getElementById('timer').textContent =
-      pad(h)+':'+pad(m)+':'+pad(s);
-  }, 1000);
+  document.getElementById('rec-bar').style.display='flex';
+  document.getElementById('btn-main').textContent='⏹ DETENER RUTA';
+  document.getElementById('btn-main').className='btn-stop';
+  document.getElementById('gps-lbl').style.color='var(--green)';
+  document.getElementById('gps-lbl').textContent='● GPS activo';
+  if(trackLine) trackLine.setLatLngs([]);
 
-  secInt = setInterval(updateFake, 1500);
+  timerInt=setInterval(()=>{
+    const e=Math.floor((Date.now()-tStart)/1000);
+    document.getElementById('timer').textContent=pad(Math.floor(e/3600))+':'+pad(Math.floor((e%3600)/60))+':'+pad(e%60);
+  },1000);
 
-  if (navigator.geolocation) {
-    watchId = navigator.geolocation.watchPosition(onGPS, null, {enableHighAccuracy:true, maximumAge:1500});
+  // Tiempo rodando/parado cada segundo
+  secInt=setInterval(()=>{
+    if(!tracking)return;
+    const spd=spdList.length?spdList[spdList.length-1]:0;
+    if(spd>3)movSec++;else stpSec++;
+    document.getElementById('t-mov').innerHTML=Math.round(movSec/60)+'<span class="metric-unit">min</span>';
+    document.getElementById('t-stp').innerHTML=Math.round(stpSec/60)+'<span class="metric-unit">min</span>';
+  },1000);
+
+  if(navigator.geolocation){
+    watchId=navigator.geolocation.watchPosition(onGPS, onGPSError, {
+      enableHighAccuracy:true,
+      maximumAge:0,
+      timeout:10000
+    });
+  } else {
+    alert('Tu dispositivo no soporta GPS');
   }
-  if (window.DeviceMotionEvent) {
-    window.addEventListener('devicemotion', onMotion);
-  }
 
-  // Publicar posición en Firebase cada 5s
-  if (fbAvailable) {
-    setInterval(publishPos, 5000);
-  }
+  if(window.DeviceMotionEvent) window.addEventListener('devicemotion',onMotion);
 }
 
-function stopRuta() {
-  tracking = false;
+function stopRuta(){
+  tracking=false;
   clearInterval(timerInt); clearInterval(secInt);
-  if (watchId) navigator.geolocation.clearWatch(watchId);
-  window.removeEventListener('devicemotion', onMotion);
-  document.getElementById('rec-bar').style.display = 'none';
-  document.getElementById('btn-main').textContent = '▶ INICIAR RUTA';
-  document.getElementById('btn-main').className = 'btn-go';
-  document.getElementById('gps-lbl').textContent = 'GPS inactivo';
-  document.getElementById('gps-lbl').style.color = 'var(--text3)';
+  if(watchId){navigator.geolocation.clearWatch(watchId);watchId=null;}
+  window.removeEventListener('devicemotion',onMotion);
 
-  const elapsed = Math.floor((Date.now()-tStart)/1000);
-  const h=Math.floor(elapsed/3600), m=Math.floor((elapsed%3600)/60), s=elapsed%60;
-  const timeStr = (h>0?h+'h ':'')+m+'m '+s+'s';
-  const avgSpd = spdList.length ? Math.round(spdList.reduce((a,b)=>a+b,0)/spdList.length) : 0;
+  document.getElementById('rec-bar').style.display='none';
+  document.getElementById('btn-main').textContent='▶ INICIAR RUTA';
+  document.getElementById('btn-main').className='btn-go';
+  document.getElementById('gps-lbl').textContent='GPS inactivo';
+  document.getElementById('gps-lbl').style.color='var(--text3)';
 
-  const summary = {
-    km: totalKm.toFixed(1), time: timeStr, maxSpd, avgSpd,
-    cL, cR, movMin: Math.round(movSec/60), stpMin: Math.round(stpSec/60),
-    tiltL, tiltR, island, ts: Date.now()
+  const e=Math.floor((Date.now()-tStart)/1000);
+  const timeStr=(Math.floor(e/3600)>0?Math.floor(e/3600)+'h ':'')+Math.floor((e%3600)/60)+'m '+e%60+'s';
+  const avg=spdList.length?Math.round(spdList.reduce((a,b)=>a+b,0)/spdList.length):0;
+
+  const s={
+    km:totalKm.toFixed(2), time:timeStr,
+    maxSpd, avgSpd:avg, cL, cR,
+    movMin:Math.round(movSec/60), stpMin:Math.round(stpSec/60),
+    tiltL, tiltR, island, ts:Date.now(),
+    points:trackPoints.slice(-200) // últimos 200 puntos para el replay
   };
-  lastSummary = summary;
-  localStorage.setItem('mr_summary', JSON.stringify(summary));
+  lastSummary=s;
+  localStorage.setItem('mr_summary',JSON.stringify(s));
 
-  const routes = parseInt(localStorage.getItem('mr_routes')||'0') + 1;
-  const km = parseFloat(localStorage.getItem('mr_totalkm')||'0') + parseFloat(summary.km);
-  localStorage.setItem('mr_routes', routes);
-  localStorage.setItem('mr_totalkm', km.toFixed(1));
+  const routes=parseInt(localStorage.getItem('mr_routes')||'0')+1;
+  const km=parseFloat(localStorage.getItem('mr_totalkm')||'0')+parseFloat(s.km);
+  localStorage.setItem('mr_routes',routes);
+  localStorage.setItem('mr_totalkm',km.toFixed(2));
   loadStats();
-
-  if (fbAvailable) {
-    fbSet('rutas/' + user.id + '_' + summary.ts, {...summary, pilot: user.name, moto: user.moto});
-  }
-
-  fillSummary(summary);
+  fillSummary(s);
   goTab('resumen');
 }
 
-function fillSummary(s) {
-  document.getElementById('s-emoji').textContent = '🏁';
-  document.getElementById('s-title').textContent = 'RUTA COMPLETADA';
-  document.getElementById('s-where').textContent = '📍 ' + (s.island || island);
-  document.getElementById('s-km').textContent = s.km + ' km';
-  document.getElementById('s-time').textContent = s.time;
-  document.getElementById('s-maxs').textContent = s.maxSpd + ' km/h';
-  document.getElementById('s-avgs').textContent = s.avgSpd + ' km/h';
-  document.getElementById('s-cl').textContent = s.cL + ' ←';
-  document.getElementById('s-cr').textContent = s.cR + ' →';
-  document.getElementById('s-mov').textContent = s.movMin + ' min';
-  document.getElementById('s-stp').textContent = s.stpMin + ' min';
-  document.getElementById('s-tl').textContent = '← ' + s.tiltL + '°';
-  document.getElementById('s-tr').textContent = s.tiltR + '° →';
-}
+// ═══ GPS HANDLER — cálculo 100% por GPS ═══
+function onGPS(pos){
+  const{latitude:la, longitude:lo, speed:spd, heading:hdg, accuracy:acc} = pos.coords;
 
-// ═══ GPS / MOTION ═══
-function onGPS(pos) {
-  const spd = (pos.coords.speed || 0) * 3.6;
-  const hdg = pos.coords.heading;
-  if (spd > maxSpd) maxSpd = Math.round(spd);
-  spdList.push(Math.round(spd));
-  if (spd > 5) movSec += 1.5; else stpSec += 1.5;
-  if (lastPos) {
-    const d = haversine(lastPos.coords.latitude, lastPos.coords.longitude, pos.coords.latitude, pos.coords.longitude);
-    totalKm += d;
+  // Velocidad en km/h desde GPS (funciona aunque esté en bolsillo)
+  const spdKmh = spd != null && spd >= 0 ? Math.round(spd * 3.6) : 0;
+
+  // Actualizar marcador en mapa
+  if(myMarker){myMarker.setLatLng([la,lo]);mainMap.panTo([la,lo],{animate:true,duration:1});}
+
+  // Guardar punto de recorrido
+  trackPoints.push([la,lo]);
+  if(trackLine) trackLine.setLatLngs(trackPoints);
+
+  // Distancia real con Haversine
+  if(lastPos){
+    const d=haversine(lastPos.lat, lastPos.lon, la, lo);
+    if(d < 0.5) totalKm+=d; // ignorar saltos GPS > 500m
   }
-  lastPos = pos;
-  if (hdg != null) detectCurve(hdg);
-  updateUI(Math.round(spd));
+  lastPos={lat:la, lon:lo};
+
+  // Velocidad máxima y lista para media
+  if(spdKmh>maxSpd) maxSpd=spdKmh;
+  spdList.push(spdKmh);
+  const avg=Math.round(spdList.reduce((a,b)=>a+b,0)/spdList.length);
+
+  // Curvas — calculadas por cambio de heading GPS
+  if(hdg!=null && hdg>=0) detectCurve(hdg, spdKmh);
+
+  // Precisión GPS
+  document.getElementById('gps-accuracy').textContent = acc ? Math.round(acc)+'m' : '—';
+  document.getElementById('map-my-speed').textContent = spdKmh;
+
+  // Mostrar aviso si precisión baja (>30m = bolsillo o mala señal)
+  const warn=document.getElementById('gps-warning');
+  warn.style.display=(acc&&acc>30)?'flex':'none';
+
+  updateUI(spdKmh, avg);
 }
 
-function onMotion(e) {
-  const g = e.accelerationIncludingGravity;
-  if (!g) return;
-  const roll = Math.atan2(g.y, g.z) * (180 / Math.PI);
-  const abs = Math.abs(Math.round(roll));
-  if (roll < 0 && abs > tiltL) { tiltL = abs; updTilt(); }
-  if (roll > 0 && abs > tiltR) { tiltR = abs; updTilt(); }
+function onGPSError(err){
+  document.getElementById('gps-lbl').textContent='⚠️ Error GPS';
+  document.getElementById('gps-lbl').style.color='var(--red)';
 }
 
-function updTilt() {
-  document.getElementById('t-tl').textContent = '← ' + tiltL + '°';
-  document.getElementById('t-tr').textContent = tiltR + '° →';
-  document.getElementById('tbar-l').style.width = Math.min(tiltL, 50) + '%';
-  document.getElementById('tbar-r').style.width = Math.min(tiltR, 50) + '%';
-}
+// ═══ DETECCIÓN DE CURVAS POR GPS ═══
+let hdgHistory=[];
+function detectCurve(hdg, spd){
+  if(spd<15) return; // no contar curvas a baja velocidad
 
-let lastHdg = null;
-function detectCurve(hdg) {
-  if (lastHdg === null) { lastHdg = hdg; return; }
-  let diff = hdg - lastHdg;
-  if (diff > 180) diff -= 360;
-  if (diff < -180) diff += 360;
-  const now = Date.now();
-  if (Math.abs(diff) > 25 && now - lastCurve > 3000) {
-    lastCurve = now;
-    if (diff > 0) { cR++; document.getElementById('t-cr').innerHTML = cR; }
-    else { cL++; document.getElementById('t-cl').innerHTML = cL; }
+  hdgHistory.push({h:hdg, t:Date.now()});
+  if(hdgHistory.length>5) hdgHistory.shift();
+  if(hdgHistory.length<3) return;
+
+  const now=Date.now();
+  if(now-lastCurve<4000) return; // mínimo 4s entre curvas
+
+  // Calcular cambio de heading acumulado en los últimos 3 puntos
+  let totalDiff=0;
+  for(let i=1;i<hdgHistory.length;i++){
+    let d=hdgHistory[i].h-hdgHistory[i-1].h;
+    if(d>180)d-=360;
+    if(d<-180)d+=360;
+    totalDiff+=d;
   }
-  lastHdg = hdg;
-}
 
-// ═══ FAKE TELEMETRY (for demo without GPS) ═══
-function updateFake() {
-  if (!tracking) return;
-  fakeSpd = Math.max(0, fakeSpd + (Math.random() - 0.4) * 14);
-  fakeSpd = Math.min(fakeSpd, 128);
-  const spd = Math.round(fakeSpd);
-
-  if (!lastPos) {
-    if (spd > maxSpd) maxSpd = spd;
-    spdList.push(spd);
-    if (spd > 5) movSec += 1.5; else stpSec += 1.5;
-    fakeKm += spd * (1.5 / 3600);
-    totalKm = fakeKm;
-    fakeCT += 1.5;
-    if (fakeCT > 9 && spd > 20 && Math.random() < 0.3) {
-      fakeCT = 0;
-      if (Math.random() < 0.52) { cL++; document.getElementById('t-cl').textContent = cL; }
-      else { cR++; document.getElementById('t-cr').textContent = cR; }
-    }
+  if(Math.abs(totalDiff)>30){
+    lastCurve=now;
+    if(totalDiff>0){cR++;document.getElementById('t-cr').textContent=cR;}
+    else{cL++;document.getElementById('t-cl').textContent=cL;}
   }
-  updateUI(spd);
 }
 
-function updateUI(spd) {
-  const avg = spdList.length ? Math.round(spdList.reduce((a,b)=>a+b,0)/spdList.length) : 0;
-  document.getElementById('t-spd').innerHTML = spd + '<span class="metric-unit">km/h</span>';
-  document.getElementById('t-km').innerHTML = totalKm.toFixed(1) + '<span class="metric-unit">km</span>';
-  document.getElementById('t-max').innerHTML = maxSpd + '<span class="metric-unit">km/h</span>';
-  document.getElementById('t-avg').innerHTML = avg + '<span class="metric-unit">km/h</span>';
-  document.getElementById('t-mov').innerHTML = Math.round(movSec/60) + '<span class="metric-unit">min</span>';
-  document.getElementById('t-stp').innerHTML = Math.round(stpSec/60) + '<span class="metric-unit">min</span>';
+// ═══ INCLINACIÓN (requiere móvil fijo en moto) ═══
+function onMotion(e){
+  const g=e.accelerationIncludingGravity;if(!g)return;
+  const roll=Math.atan2(g.y,g.z)*(180/Math.PI);
+  const abs=Math.abs(Math.round(roll));
+  if(roll<0&&abs>tiltL&&abs<80){tiltL=abs;updTilt();}
+  if(roll>0&&abs>tiltR&&abs<80){tiltR=abs;updTilt();}
+}
+function updTilt(){
+  document.getElementById('t-tl').textContent='← '+tiltL+'°';
+  document.getElementById('t-tr').textContent=tiltR+'° →';
+  document.getElementById('tbar-l').style.width=Math.min(tiltL/80*100,50)+'%';
+  document.getElementById('tbar-r').style.width=Math.min(tiltR/80*100,50)+'%';
+}
+
+function updateUI(spd,avg){
+  document.getElementById('t-spd').innerHTML=spd+'<span class="metric-unit">km/h</span>';
+  document.getElementById('t-km').innerHTML=totalKm.toFixed(2)+'<span class="metric-unit">km</span>';
+  document.getElementById('t-max').innerHTML=maxSpd+'<span class="metric-unit">km/h</span>';
+  document.getElementById('t-avg').innerHTML=(avg||0)+'<span class="metric-unit">km/h</span>';
+}
+
+// ═══ SUMMARY + REPLAY MAP ═══
+function fillSummary(s){
+  document.getElementById('s-title').textContent='RUTA COMPLETADA';
+  document.getElementById('s-where').textContent='📍 '+(s.island||island)+' · '+new Date(s.ts).toLocaleDateString('es-ES');
+  document.getElementById('s-km').textContent=s.km+' km';
+  document.getElementById('s-time').textContent=s.time;
+  document.getElementById('s-maxs').textContent=s.maxSpd+' km/h';
+  document.getElementById('s-avgs').textContent=s.avgSpd+' km/h';
+  document.getElementById('s-cl').textContent=s.cL+' ←';
+  document.getElementById('s-cr').textContent=s.cR+' →';
+  document.getElementById('s-mov').textContent=s.movMin+' min';
+  document.getElementById('s-stp').textContent=s.stpMin+' min';
+  document.getElementById('s-tl').textContent='← '+s.tiltL+'°';
+  document.getElementById('s-tr').textContent=s.tiltR+'° →';
+
+  // Mapa replay con el recorrido real
+  if(s.points&&s.points.length>1){
+    document.getElementById('replay-map').style.display='block';
+    setTimeout(()=>initReplayMap(s.points),200);
+  }
+}
+
+function initReplayMap(points){
+  if(replayMap){replayMap.remove();replayMap=null;}
+  replayMap=L.map('replay-map',{zoomControl:false,attributionControl:false,dragging:false,tap:false});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,className:'map-tiles'}).addTo(replayMap);
+  const line=L.polyline(points,{color:'#FF5F1F',weight:4,opacity:0.9}).addTo(replayMap);
+  // Inicio y fin
+  const startIcon=L.divIcon({html:'<div style="background:#00C853;width:12px;height:12px;border-radius:50%;border:2px solid #fff;"></div>',iconSize:[12,12],iconAnchor:[6,6],className:''});
+  const endIcon=L.divIcon({html:'<div style="background:#FF1744;width:12px;height:12px;border-radius:50%;border:2px solid #fff;"></div>',iconSize:[12,12],iconAnchor:[6,6],className:''});
+  L.marker(points[0],{icon:startIcon}).addTo(replayMap).bindPopup('Inicio');
+  L.marker(points[points.length-1],{icon:endIcon}).addTo(replayMap).bindPopup('Fin');
+  replayMap.fitBounds(line.getBounds(),{padding:[20,20]});
+  setTimeout(()=>replayMap.invalidateSize(),300);
 }
 
 // ═══ SHARE ═══
-function shareRuta() {
-  if (!lastSummary) { alert('No hay ninguna ruta guardada aún.'); return; }
-  const s = lastSummary;
-  const txt = `🏍️ MOTORUTA - ${user.name}\n📍 ${s.island || 'Canarias'} · ${new Date(s.ts).toLocaleDateString('es-ES')}\n\n📏 ${s.km} km | ⏱️ ${s.time}\n⚡ Máx: ${s.maxSpd} km/h | Media: ${s.avgSpd} km/h\n↰ Curvas: ${s.cL} izq · ${s.cR} der\n📐 Inclinación: ←${s.tiltL}° / ${s.tiltR}°→\n⬤ Rodando: ${s.movMin}min | ⏸ Parado: ${s.stpMin}min\n\n🔗 ${location.href}`;
-  if (navigator.share) { navigator.share({title:'MotoRuta', text:txt}); }
-  else if (navigator.clipboard) { navigator.clipboard.writeText(txt); alert('✅ Resumen copiado. Pégalo en tu grupo de WhatsApp o Telegram.'); }
+function shareRuta(){
+  if(!lastSummary){alert('No hay ninguna ruta guardada aún.');return;}
+  const s=lastSummary;
+  const txt=`🏍️ MOTORUTA - ${user.name}\n📍 ${s.island||'Canarias'} · ${new Date(s.ts).toLocaleDateString('es-ES')}\n\n📏 ${s.km} km | ⏱️ ${s.time}\n⚡ Máx: ${s.maxSpd} km/h | Media: ${s.avgSpd} km/h\n↰ Curvas: ${s.cL} izq · ${s.cR} der\n📐 Inclinación: ←${s.tiltL}° / ${s.tiltR}°→\n⬤ Rodando: ${s.movMin}min | ⏸ Parado: ${s.stpMin}min\n\n🔗 ${location.href}`;
+  if(navigator.share)navigator.share({title:'MotoRuta',text:txt});
+  else if(navigator.clipboard){navigator.clipboard.writeText(txt);alert('✅ Copiado. Pégalo en tu grupo.');}
 }
-
-function copyInvite() {
-  const url = document.getElementById('invite-url').textContent;
-  if (navigator.clipboard) { navigator.clipboard.writeText(url); alert('✅ Link copiado.'); }
-}
-function shareWA() {
-  const url = document.getElementById('invite-url').textContent;
-  window.open('https://wa.me/?text=' + encodeURIComponent('🏍️ Únete a nuestro grupo de moteros MotoRuta:\n' + url));
-}
-function shareTG() {
-  const url = document.getElementById('invite-url').textContent;
-  window.open('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent('🏍️ Únete a nuestro grupo de moteros MotoRuta'));
-}
-
-// ═══ PUBLISH POSITION ═══
-function publishPos() {
-  if (!user || !fbAvailable) return;
-  fbSet('pilotos/' + user.id, {
-    name: user.name, moto: user.moto,
-    spd: Math.round(fakeSpd), ts: Date.now(), island
-  });
-}
+function copyInvite(){const u=document.getElementById('invite-url').textContent;if(navigator.clipboard){navigator.clipboard.writeText(u);alert('✅ Link copiado.');}}
+function shareWA(){window.open('https://wa.me/?text='+encodeURIComponent('🏍️ Únete a MotoRuta:\n'+document.getElementById('invite-url').textContent));}
+function shareTG(){const u=document.getElementById('invite-url').textContent;window.open('https://t.me/share/url?url='+encodeURIComponent(u)+'&text='+encodeURIComponent('🏍️ Únete a MotoRuta'));}
 
 // ═══ UTILS ═══
-function goTab(t) {
-  ['mapa','ruta','resumen','perfil'].forEach(tab => {
-    document.getElementById('tab-'+tab).classList.toggle('active', tab===t);
-    document.getElementById('nav-'+tab).classList.toggle('active', tab===t);
+function goTab(t){
+  ['mapa','ruta','resumen','perfil'].forEach(tab=>{
+    document.getElementById('tab-'+tab).classList.toggle('active',tab===t);
+    document.getElementById('nav-'+tab).classList.toggle('active',tab===t);
   });
+  if(t==='mapa'&&mainMap) setTimeout(()=>mainMap.invalidateSize(),200);
 }
-function pad(n) { return String(n).padStart(2,'0'); }
-function haversine(lat1,lon1,lat2,lon2) {
-  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+function pad(n){return String(n).padStart(2,'0');}
+function haversine(la1,lo1,la2,lo2){
+  const R=6371,dL=(la2-la1)*Math.PI/180,dO=(lo2-lo1)*Math.PI/180;
+  const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dO/2)**2;
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-function showInviteInfo() {
-  alert('Regístrate con cualquier nombre y contraseña. Luego en la pestaña "Perfil" encontrarás el link para compartir con tu grupo.');
 }
 
 // ═══ INIT ═══
-if (user) {
-  document.getElementById('screen-login').style.display = 'none';
-  document.getElementById('screen-app').style.display = 'flex';
+if(user){
+  document.getElementById('screen-login').style.display='none';
+  document.getElementById('screen-app').style.display='flex';
   enterApp();
 }
 </script>
